@@ -1,0 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Bee_Movement : MonoBehaviour
+{
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Transform GFX;
+    [SerializeField] private float thrustForce = 10f;
+    [SerializeField] private float maxUpwardSpeed = 8f;
+
+    private bool isThrusting = false;
+
+    private void Update()
+    {
+        // check input
+        isThrusting = Input.GetButton("Jump");
+    }
+
+    private void FixedUpdate()
+    {
+        if (isThrusting)
+        {
+#if UNITY_6000_0_OR_NEWER
+            // apply upward velocity (arcadey burst feel)
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, thrustForce);
+#else
+            rb.velocity = new Vector2(rb.velocity.x, thrustForce);
+#endif
+        }
+
+        // optional: clamp upward speed so it doesn’t fly away forever
+#if UNITY_6000_0_OR_NEWER
+        if (rb.linearVelocity.y > maxUpwardSpeed)
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, maxUpwardSpeed);
+#else
+        if (rb.velocity.y > maxUpwardSpeed)
+            rb.velocity = new Vector2(rb.velocity.x, maxUpwardSpeed);
+#endif
+    }
+}
